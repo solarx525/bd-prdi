@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Happy Birthday</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Bubblegum+Sans&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --pink-soft: #3b1d31;
+      --pink-deep: #f472b6;
+      --blue-soft: #1c121b;
+      --blue-deep: #f472b6;
+      --ink: #fff1f2;
+      --card: #1c1221;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      height: 100%;
+      font-family: 'Patrick Hand', 'Outfit', sans-serif;
+      color: var(--ink);
+    }
+
+    body {
+      background: linear-gradient(150deg, #180e1c 0%, #261326 50%, #35172b 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100dvh;
+    }
+
+    /* ---------- outer bordered container ---------- */
+    .frame {
+      width: 100vw;
+      max-width: 460px;
+      height: 100dvh;
+      padding: 16px;
+      background: linear-gradient(160deg, #2a1124, #3d142e, #581c3e);
+      border-radius: 32px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75), 0 0 0 6px rgba(244, 114, 182, 0.25);
+    }
+
+    .app {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      background: var(--card);
+      border: 3px solid var(--blue-deep);
+      border-radius: 24px;
+      overflow: hidden;
+    }
+
+    #wordfield {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(7, 1fr);
+      gap: 6px;
+      padding: 12px;
+    }
+
+    #wordfield span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bubblegum Sans', cursive;
+      white-space: nowrap;
+      user-select: none;
+      text-transform: lowercase;
+      letter-spacing: 0.05em;
+      transition: all 0.4s ease;
+      animation: wordFloat 7s ease-in-out infinite alternate;
+    }
+
+    #wordfield span.vertical {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+    }
+
+    @keyframes wordFloat {
+      0% {
+        transform: translateY(0px) scale(1);
+      }
+
+      100% {
+        transform: translateY(-8px) scale(1.03);
+      }
+    }
+
+    .page {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      opacity: 0;
+      transform: translateX(20px);
+      transition: opacity .5s ease, transform .5s ease;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .page.active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+
+    .page.scrollable {
+      overflow-y: auto;
+      justify-content: flex-start;
+      padding-top: 2.6rem;
+      padding-bottom: 3rem;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .eyebrow {
+      font-family: 'Bubblegum Sans', cursive;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--blue-deep);
+      margin-bottom: 0.9rem;
+      opacity: 0.95;
+    }
+
+    h1 {
+      font-family: 'Bubblegum Sans', cursive;
+      font-weight: 400;
+      font-size: clamp(1.65rem, 7.5vw, 2.2rem);
+      line-height: 1.2;
+      color: var(--ink);
+    }
+
+    h1 em {
+      font-style: normal;
+      font-weight: 400;
+      color: var(--blue-deep);
+    }
+
+    p.sub {
+      font-family: 'Patrick Hand', cursive;
+      color: #fbcfe8;
+      opacity: 0.9;
+      font-size: 1.1rem;
+      margin-top: 0.6rem;
+      max-width: 26ch;
+    }
+
+    /* ---------- passcode ---------- */
+    .dots {
+      display: flex;
+      gap: 0.85rem;
+      margin: 2.2rem 0 2rem;
+    }
+
+    .dot {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      border: 2.5px solid var(--blue-deep);
+      opacity: 0.5;
+      transition: all .25s ease;
+    }
+
+    .dot.filled {
+      background: var(--blue-deep);
+      border-color: var(--blue-deep);
+      opacity: 1;
+      box-shadow: 0 0 12px rgba(244, 114, 182, 0.7);
+    }
+
+    .dots.shake {
+      animation: shake .4s ease;
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      25% {
+        transform: translateX(-8px);
+      }
+
+      75% {
+        transform: translateX(8px);
+      }
+    }
+
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.85rem;
+      width: 100%;
+      max-width: 250px;
+    }
+
+    .key {
+      aspect-ratio: 1;
+      border-radius: 18px;
+      border: 2.5px solid var(--blue-deep);
+      background: #2d182e;
+      font-family: 'Bubblegum Sans', cursive;
+      font-size: 1.35rem;
+      color: #fff1f2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all .15s ease;
+      box-shadow: 0 4px 0 #9d174d;
+    }
+
+    .key:active {
+      background: var(--blue-deep);
+      color: #1c1221;
+      transform: scale(0.94) translateY(2px);
+      box-shadow: 0 1px 0 #9d174d;
+    }
+
+    .key.ghost {
+      background: transparent;
+      border: none;
+    }
+
+    #confettiCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      pointer-events: none;
+    }
+
+    /* ---------- crossword ---------- */
+    #grid {
+      display: grid;
+      gap: 4px;
+      background: transparent;
+      padding: 4px;
+      border-radius: 16px;
+      width: min(100%, 320px);
+      margin: 0.8rem 0 1rem;
+    }
+
+    @media (max-height: 700px) {
+      #grid {
+        gap: 3px;
+        padding: 3px;
+        width: min(100%, 270px);
+        margin: 0.5rem 0 0.8rem;
+      }
+    }
+
+    .cell {
+      position: relative;
+      aspect-ratio: 1;
+      background: #2d182e;
+      border: 2.5px solid #f472b6;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 0 #9d174d;
+      transition: all .15s ease;
+    }
+
+    .cell.selected {
+      background: #e11d48;
+      border-color: #fda4af;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 0 #9f1239, 0 0 16px rgba(244, 114, 182, 0.6);
+    }
+
+    .cell.wrong {
+      background: #7f1d1d !important;
+      border-color: #f87171 !important;
+      box-shadow: 0 4px 0 #991b1b !important;
+      animation: tileShake 0.3s ease;
+    }
+
+    .cell.correct {
+      background: #064e3b !important;
+      border-color: #34d399 !important;
+      box-shadow: 0 4px 0 #065f46 !important;
+    }
+
+    @keyframes tileShake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      25% {
+        transform: translateX(-3px);
+      }
+
+      75% {
+        transform: translateX(3px);
+      }
+    }
+
+    .cell.block {
+      background: transparent;
+      border: 2px dashed rgba(244, 114, 182, 0.15);
+      box-shadow: none;
+      border-radius: 12px;
+      opacity: 0.3;
+    }
+
+    .cell input {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: transparent;
+      text-align: center;
+      text-transform: uppercase;
+      font-family: 'Bubblegum Sans', cursive;
+      font-weight: 400;
+      font-size: clamp(0.9rem, 3.5vw, 1.3rem);
+      color: #ffffff;
+      outline: none;
+      caret-color: transparent;
+      cursor: pointer;
+    }
+
+    .cell input.correct {
+      color: #a7f3d0;
+    }
+
+    .cell input.wrong {
+      color: #fca5a5;
+    }
+
+    .cell .num {
+      position: absolute;
+      top: 2px;
+      left: 4px;
+      font-family: 'Patrick Hand', cursive;
+      font-size: 0.68rem;
+      color: #f472b6;
+      opacity: 0.95;
+      font-weight: bold;
+    }
+
+    .clue-list {
+      width: 100%;
+      text-align: left;
+      margin-bottom: 1rem;
+    }
+
+    .clue-list h3 {
+      font-family: 'Bubblegum Sans', cursive;
+      font-size: 0.82rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--blue-deep);
+      margin: 0.9rem 0 0.4rem;
+    }
+
+    .clue-list ol {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .clue-list li {
+      font-family: 'Patrick Hand', cursive;
+      font-size: 1.05rem;
+      color: var(--ink);
+      opacity: 0.92;
+    }
+
+    .clue-list li b {
+      color: var(--blue-deep);
+      opacity: 1;
+    }
+
+    .btn {
+      font-family: 'Bubblegum Sans', cursive;
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #f472b6, #e11d48);
+      color: #1c1221;
+      font-weight: bold;
+      border: none;
+      padding: 0.85rem 1.9rem;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #9d174d;
+      transition: all .15s ease;
+      flex-shrink: 0;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn:active {
+      transform: scale(0.97) translateY(2px);
+      box-shadow: 0 1px 0 #9d174d;
+    }
+
+    /* ---------- unlock overlay ---------- */
+    #unlockOverlay {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--card);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .4s ease;
+    }
+
+    #unlockOverlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .lock-wrap {
+      width: 100px;
+      height: 100px;
+      position: relative;
+      margin-bottom: 1.2rem;
+    }
+
+    .lock-wrap svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    #shackle {
+      transform-origin: 50px 38px;
+      transition: transform .7s cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    .unlocked #shackle {
+      transform: translateY(-10px) rotate(-25deg);
+    }
+
+    .burst {
+      position: absolute;
+      inset: -40px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(244, 114, 182, 0.5), transparent 65%);
+      opacity: 0;
+      transform: scale(0.3);
+      transition: all .7s ease;
+    }
+
+    .unlocked .burst {
+      opacity: 1;
+      transform: scale(1.4);
+    }
+
+    /* ---------- loading bar & sticky top header ---------- */
+    .sticky-top-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(28, 18, 33, 0.94);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 0.8rem 0.8rem 0.4rem;
+      margin: -2.6rem -1.5rem 1.5rem -1.5rem;
+      border-bottom: 2.5px dashed rgba(244, 114, 182, 0.35);
+      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .sticky-top-header.gold-treasure {
+      background: linear-gradient(135deg, #451a03, #78350f);
+      border-bottom: 3.5px solid #f59e0b;
+      box-shadow: 0 8px 24px rgba(245, 158, 11, 0.5);
+      animation: goldPulse 1.5s infinite alternate;
+    }
+
+    @keyframes goldPulse {
+      0% {
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+      }
+
+      100% {
+        box-shadow: 0 10px 32px rgba(245, 158, 11, 0.75);
+      }
+    }
+
+    .loading-bar {
+      position: relative;
+      width: 100%;
+      height: 10px;
+      background: #2d182e;
+      border-radius: 999px;
+      overflow: visible;
+      margin-bottom: 0.6rem;
+      border: 2px solid var(--blue-deep);
+    }
+
+    .loading-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #f472b6, #fb7185, #fde047);
+      border-radius: 999px;
+      position: relative;
+      transition: width 0.1s linear;
+    }
+
+    .heart-slider {
+      position: absolute;
+      right: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.95rem;
+      line-height: 1;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+      transition: transform 0.25s ease;
+    }
+
+    /* ---------- photos + finale (single scrollable page) ---------- */
+    .section-head {
+      text-align: center;
+      padding: 0 0.5rem;
+    }
+
+    .photo-list {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 3.5rem;
+      padding-top: 1rem;
+      margin-bottom: 4rem;
+    }
+
+    .photo-item {
+      position: relative;
+      width: 85%;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: translateY(35px) scale(0.85);
+      transition: opacity 0.25s ease-out, transform 0.25s ease-out, filter 0.25s ease-out;
+      will-change: transform, opacity, filter;
+    }
+
+    .photo-item.left {
+      align-self: flex-start;
+      align-items: flex-start;
+    }
+
+    .photo-item.right {
+      align-self: flex-end;
+      align-items: flex-end;
+    }
+
+    .photo-frame {
+      width: 100%;
+      aspect-ratio: 4/5;
+      border-radius: 16px;
+      background: linear-gradient(160deg, #2d182e, #1c121b);
+      border: 4px solid var(--blue-deep);
+      box-shadow: 0 6px 0 #9d174d, 0 10px 25px rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background-size: cover;
+      background-position: center;
+      font-family: 'Bubblegum Sans', cursive;
+      font-size: 0.85rem;
+      color: #f472b6;
+      text-align: center;
+      position: relative;
+    }
+
+    .gif-overlay {
+      position: absolute;
+      bottom: 1.5rem;
+      width: 38%;
+      border-radius: 12px;
+      border: 3px solid #f472b6;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+      z-index: 10;
+    }
+
+    .photo-item.left .gif-overlay {
+      right: -12%;
+      transform: rotate(6deg);
+    }
+
+    .photo-item.right .gif-overlay {
+      left: -12%;
+      transform: rotate(-6deg);
+    }
+
+    .photo-caption {
+      font-family: 'Patrick Hand', cursive;
+      font-size: 1.1rem;
+      color: var(--ink);
+      opacity: 0.95;
+      margin-top: 0.7rem;
+      max-width: 90%;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, .8);
+    }
+
+    .photo-item.right .photo-caption {
+      text-align: right;
+    }
+
+    .finale-block {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 2px dashed var(--blue-deep);
+      position: relative;
+      opacity: 0;
+      transform: scale(0.3) translateY(60px);
+      transition: transform 0.85s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.7s ease;
+    }
+
+    .finale-block.visible {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
+    .player {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      border: 2.5px solid var(--blue-deep);
+      border-radius: 18px;
+      padding: 0.8rem 1rem;
+      background: #2d182e;
+      margin: 0.4rem 0 1.8rem;
+      width: 100%;
+      max-width: 300px;
+      box-shadow: 0 4px 0 #9d174d;
+    }
+
+    .cover {
+      width: 46px;
+      height: 46px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #f472b6, #e11d48);
+      flex-shrink: 0;
+    }
+
+    .track-meta {
+      text-align: left;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .track-meta .title {
+      font-family: 'Bubblegum Sans', cursive;
+      font-size: 1rem;
+      color: #fff1f2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .track-meta .artist {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      color: #fbcfe8;
+      opacity: 0.8;
+      margin-top: 0.15rem;
+    }
+
+    .play-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid #f472b6;
+      background: transparent;
+      color: #f472b6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .name-reveal {
+      font-family: 'Bubblegum Sans', cursive;
+      font-weight: 400;
+      font-size: clamp(1.9rem, 9vw, 2.4rem);
+      color: var(--ink);
+    }
+
+    .name-reveal em {
+      font-style: normal;
+      font-weight: 400;
+      color: var(--blue-deep);
+      display: block;
+    }
+
+    .finale-msg {
+      font-family: 'Patrick Hand', cursive;
+      color: var(--ink);
+      opacity: 0.8;
+      max-width: 28ch;
+      margin-top: 0.9rem;
+      font-size: 1.05rem;
+    }
+
+
+
+    .music-toggle-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 30;
+      padding: 0 10px;
+      height: 34px;
+      border-radius: 999px;
+      border: 2.5px solid var(--blue-deep);
+      background: #2d182e;
+      color: #fff1f2;
+      font-family: 'Bubblegum Sans', cursive;
+      font-size: 0.85rem;
+      display: none;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #9d174d, 0 4px 12px rgba(0, 0, 0, 0.4);
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .music-toggle-btn:active {
+      transform: scale(0.94) translateY(2px);
+      box-shadow: 0 1px 0 #9d174d;
+    }
+
+    .music-toggle-btn.playing {
+      background: linear-gradient(135deg, #3b1d31, #2d182e);
+      border-color: #f472b6;
+      box-shadow: 0 4px 0 #9d174d, 0 0 14px rgba(244, 114, 182, 0.6);
+      animation: musicPulse 1.4s infinite alternate;
+    }
+
+    @keyframes musicPulse {
+      0% {
+        box-shadow: 0 4px 0 #9d174d, 0 0 6px rgba(244, 114, 182, 0.3);
+      }
+
+      100% {
+        box-shadow: 0 4px 0 #9d174d, 0 0 16px rgba(244, 114, 182, 0.8);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="frame">
+    <div class="app">
+      <div id="wordfield"></div>
+      <button class="music-toggle-btn" id="musicToggleBtn" title="Play Music">🎵 <span>▶</span></button>
+
+      <!-- PAGE 0: PASSCODE -->
+      <div class="page active" data-page="0">
+        <span class="eyebrow" id="pc-eyebrow"></span>
+        <h1 id="pc-title"></h1>
+        <p class="sub" id="pc-sub"></p>
+        <div class="dots" id="dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+        <div class="keypad" id="keypad">
+          <div class="key" data-k="1">1</div>
+          <div class="key" data-k="2">2</div>
+          <div class="key" data-k="3">3</div>
+          <div class="key" data-k="4">4</div>
+          <div class="key" data-k="5">5</div>
+          <div class="key" data-k="6">6</div>
+          <div class="key" data-k="7">7</div>
+          <div class="key" data-k="8">8</div>
+          <div class="key" data-k="9">9</div>
+          <div class="key ghost"></div>
+          <div class="key" data-k="0">0</div>
+          <div class="key" data-k="back">⌫</div>
+        </div>
+      </div>
+
+      <!-- PAGE 1: CROSSWORD -->
+      <div class="page scrollable" data-page="1">
+        <span class="eyebrow" id="cw-eyebrow"></span>
+        <h1 id="cw-title"></h1>
+        <div id="grid"></div>
+        <div class="clue-list" id="clueList"></div>
+        <button class="btn" id="checkBtn">Check answers</button>
+
+        <div id="unlockOverlay">
+          <div class="lock-wrap" id="lockWrap">
+            <div class="burst"></div>
+            <svg viewBox="0 0 100 100">
+              <g id="shackle">
+                <path d="M35 45 V32 a15 15 0 0 1 30 0 V45" fill="none" stroke="#f472b6" stroke-width="6"
+                  stroke-linecap="round" />
+              </g>
+              <rect x="26" y="45" width="48" height="36" rx="6" fill="#f472b6" />
+              <circle cx="50" cy="61" r="5" fill="#fff1f2" />
+              <rect x="47.5" y="61" width="5" height="10" rx="2" fill="#fff1f2" />
+            </svg>
+          </div>
+          <h1 id="unlockText"></h1>
+        </div>
+      </div>
+
+      <!-- PAGE 2: PHOTOS + FINALE (one continuous scroll) -->
+      <div class="page scrollable" data-page="2" id="page2">
+        <div class="sticky-top-header" id="page3Header">
+          <div class="loading-bar">
+            <div class="loading-bar-fill" id="loadingBarFill">
+              <span class="heart-slider" id="heartSlider">💖</span>
+            </div>
+          </div>
+          <div class="section-head">
+            <span class="eyebrow" id="ph-eyebrow"></span>
+            <h1 id="ph-title"></h1>
+          </div>
+        </div>
+
+        <div class="photo-list" id="photoList"></div>
+
+        <div class="finale-block" id="finaleBlock">
+          <span class="eyebrow" id="fin-eyebrow"></span>
+          <div class="name-reveal" id="nameReveal"></div>
+          <p class="finale-msg" id="finaleMsg"></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <audio id="audio" preload="none" loop></audio>
+
+  <script>
+    /* ---------------- default config (fallback if config.json can't be fetched, e.g. opened as a local file) ---------------- */
+    const DEFAULT_CONFIG = {
+      names: { her: "Prdhi", you: "satpaiyan" },
+      passcode: "2505",
+      colors: { pinkSoft: "#3b1d31", pinkDeep: "#f472b6", blueSoft: "#1c121b", blueDeep: "#f472b6", ink: "#fff1f2", card: "#1c1221" },
+      passcodeScreen: {
+        eyebrow: "a little something for my prdhi💙", title: "kandupudi paklan passcode ah🤭", subtitle: "lite ah yosikanun tension agiradha papu😁",
+        errorPhrases: [
+          "Ayyoo adhu illa papoo! 🙈",
+          "Kavala padadha, marubadiyum try pannu! 😜",
+          "Ey olunga passcode podu! 🤫"
+        ]
+      },
+      crosswordScreen: {
+        eyebrow: "oru cross word paati enge irukirnu", title: "Epdiyun mass panniruva🤭",
+        errorPhrases: [
+          "Letter thappa iruku paati! ✏️",
+          "Check pannu pathu podu buja! 🙈",
+          "Enna papoo ipdi thappa type panra? 🤪",
+          "Loose-u thappa podraye di! 😂"
+        ],
+        clues: {
+          "1down": { clue: "thirutu muli abbreviation", answer: "TMTM" },
+          "2down": { clue: "a meeting place first comes to mind", answer: "APS" },
+          "3across": { clue: "a movie which relates us", answer: "29" },
+          "4across": { clue: "oru nadhi peyar nenga sonadhu", answer: "SHANMUGA" },
+          "5down": { clue: "the magic month", answer: "APRIL" },
+          "6down": { clue: "bubu's nic name", answer: "BUJA" },
+          "7across": { clue: "dudu's childhood nic name", answer: "GUJILI" },
+          "8across": { clue: "our color", answer: "BLUE" }
+        }
+      },
+      unlockScreen: { text: "Unlocking..." },
+      music: { crossword: "music/2.mp3", final: "music/3.mp3" },
+      photosScreen: {
+        eyebrow: "a few little things I remember", title: "Us, in pictures",
+        photos: [
+          { caption: "elikutti rendu pallu🤭", src: "", gif: "gifs/blushcat.mp4" },
+          { caption: "kutty rowdyyy😝", src: "", gif: "gifs/boyjumpk.mp4" },
+          { caption: "azhagiiii ri🥰", src: "", gif: "gifs/akkablush.mp4" },
+          { caption: "appaaavi moonji pavon🫣", src: "", gif: "gifs/cutepat.mp4" },
+          { caption: "Paaaa🫣", src: "", gif: "gifs/cathands.mp4" },
+          { caption: "tired ah buja🤕 analun cutiee", src: "", gif: "gifs/chinhug.mp4" },
+          { caption: "kutti trouser girl 🫣", src: "", gif: "gifs/jumphug.mp4" },
+          { caption: "boobooo va illla bubu vaaa😼", src: "", gif: "gifs/bitecat.mp4" },
+          { caption: "bujubuju bujaaaa💙", src: "", gif: "gifs/catfingerbite.mp4" },
+          { caption: "Always & forever with you😂", src: "", gif: "gifs/tmtm.mp4" }
+        ]
+      },
+      finaleScreen: { eyebrow: "For My prdhu💙💙💙💙💙", message: "❤️எனக்காக பிறந்தாயே எனதழகி💓 " }
+    };
+
+    const CONFIG = DEFAULT_CONFIG;
+
+    /* ---------------- crossword grid geometry (fixed — do not change here, edit answers in config.json) ---------------- */
+    // 0 = blocked cell. Any other value = open cell with its DEFAULT letter (used only as a fallback).
+    const PATTERN = [
+      [0, 0, 0, 0, 0, "T", 0, 0, 0, 0],
+      [0, "A", 0, 0, 0, "M", 0, 0, "2", "9"],
+      [0, "P", 0, 0, 0, "T", 0, 0, 0, 0],
+      [0, "S", "H", "A", "N", "M", "U", "G", "A", 0],
+      [0, 0, 0, "P", 0, 0, 0, 0, 0, 0],
+      [0, "B", 0, "R", 0, 0, 0, 0, 0, 0],
+      ["G", "U", "J", "I", "L", "I", 0, 0, 0, 0],
+      [0, "J", 0, "L", 0, 0, 0, 0, 0, 0],
+      [0, "A", 0, 0, "B", "L", "U", "E", 0, 0]
+    ];
+
+    function computeSlots(pattern) {
+      const rows = pattern.length, cols = pattern[0].length;
+      const open = pattern.map(row => row.map(v => v !== 0));
+      let num = 1;
+      const cellNumber = {};
+      const slots = [];
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          if (!open[r][c]) continue;
+          const startsAcross = (c === 0 || !open[r][c - 1]) && (c + 1 < cols && open[r][c + 1]);
+          const startsDown = (r === 0 || !open[r - 1][c]) && (r + 1 < rows && open[r + 1][c]);
+          if (startsAcross || startsDown) {
+            cellNumber[r + ',' + c] = num;
+            if (startsAcross) {
+              const cells = []; let cc = c;
+              while (cc < cols && open[r][cc]) { cells.push({ r, c: cc }); cc++; }
+              slots.push({ id: num + 'across', number: num, dir: 'across', cells });
+            }
+            if (startsDown) {
+              const cells = []; let rr = r;
+              while (rr < rows && open[rr][c]) { cells.push({ r: rr, c }); rr++; }
+              slots.push({ id: num + 'down', number: num, dir: 'down', cells });
+            }
+            num++;
+          }
+        }
+      }
+      return { slots, cellNumber, rows, cols };
+    }
+
+    function init() {
+      document.documentElement.style.setProperty('--pink-soft', CONFIG.colors.pinkSoft);
+      document.documentElement.style.setProperty('--pink-deep', CONFIG.colors.pinkDeep);
+      document.documentElement.style.setProperty('--blue-soft', CONFIG.colors.blueSoft);
+      document.documentElement.style.setProperty('--blue-deep', CONFIG.colors.blueDeep);
+      document.documentElement.style.setProperty('--ink', CONFIG.colors.ink);
+      document.documentElement.style.setProperty('--card', CONFIG.colors.card);
+
+      document.getElementById('pc-eyebrow').textContent = CONFIG.passcodeScreen.eyebrow;
+      document.getElementById('pc-title').textContent = CONFIG.passcodeScreen.title;
+      document.getElementById('pc-sub').textContent = CONFIG.passcodeScreen.subtitle;
+
+      document.getElementById('cw-eyebrow').textContent = CONFIG.crosswordScreen.eyebrow;
+      document.getElementById('cw-title').textContent = CONFIG.crosswordScreen.title;
+      document.getElementById('unlockText').textContent = CONFIG.unlockScreen.text;
+
+      document.getElementById('ph-eyebrow').textContent = CONFIG.photosScreen.eyebrow;
+      document.getElementById('ph-title').textContent = CONFIG.photosScreen.title;
+
+      document.getElementById('fin-eyebrow').textContent = CONFIG.finaleScreen.eyebrow;
+      document.getElementById('nameReveal').innerHTML = 'Happy Birthday<em>' + CONFIG.names.her + ' 🎉</em>';
+      document.getElementById('finaleMsg').textContent = CONFIG.finaleScreen.message;
+
+      buildWordfield();
+      buildCrossword();
+      buildPhotos();
+    }
+
+    /* ---------------- background words ---------------- */
+    function buildWordfield() {
+      const words = [
+        "thangapattu", "bujaa", "bujuk bujuk", "pattoootie", "kuchu puchu",
+        "mutta kanni", "eeee dog", "azhagi", "papu", "papaa",
+        "mi", "dog", "paaaaa", "chetapaya", "deiiii",
+        "adiye", "sari vidunga", "saptiya buva", "boss", "baaa nu thoongiten",
+        "pa kovamaa", "maamiyar", "svv", "vantaya pa", "mutta kalakki", "oviya", "prdhi hub", "mass", "cutie"
+      ];
+
+      const colors = ["#f472b6", "#fb7185", "#f43f5e", "#e879f9", "#fda4af", "#ec4899"];
+      const fonts = ["'Bubblegum Sans', cursive", "'Patrick Hand', cursive"];
+
+      const field = document.getElementById('wordfield');
+      field.innerHTML = '';
+
+      const shuffled = words.slice().sort(() => 0.5 - Math.random());
+
+      for (let i = 0; i < 28; i++) {
+        const w = document.createElement('span');
+        w.textContent = shuffled[i % shuffled.length];
+
+        // Vertical vs Horizontal alignment mix
+        const isVertical = (i % 4 === 1 && i % 3 === 0) || (i === 5 || i === 14 || i === 23);
+        if (isVertical) {
+          w.classList.add('vertical');
+        }
+
+        // Varied sizes: statement headlines, medium words, and accent scripts
+        let fontSize;
+        if (i % 7 === 0) {
+          fontSize = (1.65 + Math.random() * 0.45) + 'rem';
+          w.style.fontWeight = 'bold';
+        } else if (i % 3 === 0) {
+          fontSize = (1.1 + Math.random() * 0.25) + 'rem';
+        } else {
+          fontSize = (0.78 + Math.random() * 0.22) + 'rem';
+        }
+        w.style.fontSize = fontSize;
+
+        w.style.fontFamily = fonts[i % fonts.length];
+        w.style.color = colors[i % colors.length];
+        w.style.opacity = (0.16 + (i % 5) * 0.03).toFixed(2);
+
+        w.style.animationDelay = (Math.random() * 5).toFixed(1) + 's';
+        w.style.animationDuration = (5 + Math.random() * 5).toFixed(1) + 's';
+
+        field.appendChild(w);
+      }
+    }
+
+    /* ---------------- passcode ---------------- */
+    let entered = "";
+    let passcodeErrIdx = 0;
+    const dotsWrap = document.getElementById('dots');
+    const dots = dotsWrap.querySelectorAll('.dot');
+    function renderDots() { dots.forEach((d, i) => d.classList.toggle('filled', i < entered.length)); }
+
+    document.getElementById('keypad').addEventListener('click', (e) => {
+      const key = e.target.closest('.key');
+      if (!key || key.classList.contains('ghost')) return;
+      const k = key.dataset.k;
+      if (k === 'back') { entered = entered.slice(0, -1); renderDots(); return; }
+      if (entered.length < 4) { entered += k; renderDots(); }
+      if (entered.length === 4) {
+        setTimeout(() => {
+          if (entered === CONFIG.passcode) {
+            burstConfetti();
+            setTimeout(() => goTo(1), 800);
+          } else {
+            dotsWrap.classList.add('shake');
+            const pcSub = document.getElementById('pc-sub');
+            const errList = (CONFIG.passcodeScreen && CONFIG.passcodeScreen.errorPhrases && CONFIG.passcodeScreen.errorPhrases.length)
+              ? CONFIG.passcodeScreen.errorPhrases
+              : ["Wrong code! Try again 🙈"];
+
+            const msg = errList[passcodeErrIdx % errList.length];
+            passcodeErrIdx++;
+            if (pcSub) {
+              pcSub.textContent = msg;
+              pcSub.style.color = '#fb7185';
+            }
+
+            setTimeout(() => { dotsWrap.classList.remove('shake'); entered = ""; renderDots(); }, 400);
+          }
+        }, 150);
+      }
+    });
+
+    /* ---------------- confetti ---------------- */
+    const canvas = document.getElementById('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+    function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+    resize(); addEventListener('resize', resize);
+    function burstConfetti() {
+      const colors = ['#f472b6', '#fb7185', '#f43f5e', '#fde047', '#34d399', '#fda4af'];
+      const cx = innerWidth / 2, cy = innerHeight / 2;
+      const particles = Array.from({ length: 110 }, () => ({
+        x: cx, y: cy, vx: (Math.random() - 0.5) * 13, vy: (Math.random() - 1.3) * 13,
+        size: 4 + Math.random() * 4, color: colors[Math.floor(Math.random() * colors.length)],
+        rot: Math.random() * 360, vr: (Math.random() - 0.5) * 10, life: 0
+      }));
+      function frame() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach(p => {
+          p.life++; if (p.life > 85) return; alive = true;
+          p.vy += 0.35; p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+          ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180);
+          ctx.fillStyle = p.color; ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size); ctx.restore();
+        });
+        if (alive) requestAnimationFrame(frame); else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      frame();
+    }
+
+    /* ---------------- crossword ---------------- */
+    function buildCrossword() {
+      const { slots, cellNumber, rows, cols } = computeSlots(PATTERN);
+      const grid = document.getElementById('grid');
+      grid.style.gridTemplateColumns = `repeat(${cols}, minmax(0,1fr))`;
+      grid.style.gridTemplateRows = `repeat(${rows}, minmax(0,1fr))`;
+
+      const inputsMap = {};
+      const inputList = [];
+
+      function validateCell(key) {
+        const inp = inputsMap[key];
+        if (!inp) return;
+        const cell = inp.parentElement;
+        const [r, c] = key.split(',').map(Number);
+        const expected = String(PATTERN[r][c]).toUpperCase();
+        const val = inp.value.trim().toUpperCase();
+
+        if (val === '') {
+          cell.classList.remove('correct', 'wrong');
+          inp.classList.remove('correct', 'wrong');
+        } else if (val === expected) {
+          cell.classList.add('correct');
+          cell.classList.remove('wrong');
+          inp.classList.add('correct');
+          inp.classList.remove('wrong');
+        } else {
+          cell.classList.add('wrong');
+          cell.classList.remove('correct');
+          inp.classList.add('wrong');
+          inp.classList.remove('correct');
+        }
+      }
+
+      function focusNextCell(key) {
+        const [r, c] = key.split(',').map(Number);
+        if (inputsMap[`${r},${c + 1}`]) {
+          inputsMap[`${r},${c + 1}`].focus();
+          return;
+        }
+        if (inputsMap[`${r + 1},${c}`]) {
+          inputsMap[`${r + 1},${c}`].focus();
+          return;
+        }
+        const idx = inputList.findIndex(inp => inp.dataset.key === key);
+        if (idx !== -1 && idx + 1 < inputList.length) {
+          inputList[idx + 1].focus();
+        }
+      }
+
+      function focusPrevCell(key) {
+        const [r, c] = key.split(',').map(Number);
+        if (inputsMap[`${r},${c - 1}`]) {
+          inputsMap[`${r},${c - 1}`].focus();
+          return;
+        }
+        if (inputsMap[`${r - 1},${c}`]) {
+          inputsMap[`${r - 1},${c}`].focus();
+          return;
+        }
+        const idx = inputList.findIndex(inp => inp.dataset.key === key);
+        if (idx > 0) {
+          inputList[idx - 1].focus();
+        }
+      }
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const cell = document.createElement('div');
+          const open = PATTERN[r][c] !== 0;
+          cell.className = 'cell' + (open ? '' : ' block');
+          if (open) {
+            const key = r + ',' + c;
+            if (cellNumber[key]) {
+              const n = document.createElement('span'); n.className = 'num'; n.textContent = cellNumber[key];
+              cell.appendChild(n);
+            }
+            const input = document.createElement('input');
+            input.maxLength = 1;
+            input.dataset.key = key;
+
+            input.addEventListener('focus', () => {
+              document.querySelectorAll('.cell').forEach(c => c.classList.remove('selected'));
+              cell.classList.add('selected');
+            });
+            input.addEventListener('blur', () => {
+              cell.classList.remove('selected');
+            });
+
+            input.addEventListener('input', e => {
+              e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+              validateCell(key);
+            });
+
+            input.addEventListener('keydown', e => {
+              const [currR, currC] = key.split(',').map(Number);
+
+              if (e.key === 'Backspace') {
+                if (e.target.value !== '') {
+                  e.target.value = '';
+                  validateCell(key);
+                } else {
+                  focusPrevCell(key);
+                }
+                e.preventDefault();
+              } else if (/^[a-zA-Z0-9]$/.test(e.key)) {
+                e.target.value = e.key.toUpperCase();
+                validateCell(key);
+                focusNextCell(key);
+                e.preventDefault();
+              } else if (e.key === 'ArrowRight' && inputsMap[`${currR},${currC + 1}`]) {
+                inputsMap[`${currR},${currC + 1}`].focus();
+                e.preventDefault();
+              } else if (e.key === 'ArrowLeft' && inputsMap[`${currR},${currC - 1}`]) {
+                inputsMap[`${currR},${currC - 1}`].focus();
+                e.preventDefault();
+              } else if (e.key === 'ArrowDown' && inputsMap[`${currR + 1},${currC}`]) {
+                inputsMap[`${currR + 1},${currC}`].focus();
+                e.preventDefault();
+              } else if (e.key === 'ArrowUp' && inputsMap[`${currR - 1},${currC}`]) {
+                inputsMap[`${currR - 1},${currC}`].focus();
+                e.preventDefault();
+              }
+            });
+
+            cell.appendChild(input);
+            inputsMap[key] = input;
+            inputList.push(input);
+          }
+          grid.appendChild(cell);
+        }
+      }
+
+      // resolve answers: config override -> pattern default
+      slots.forEach(slot => {
+        const custom = CONFIG.crosswordScreen.clues[slot.id];
+        let answer = custom && custom.answer ? custom.answer.toUpperCase() : slot.cells.map(({ r, c }) => PATTERN[r][c]).join('');
+        if (answer.length !== slot.cells.length) {
+          answer = slot.cells.map(({ r, c }) => PATTERN[r][c]).join('');
+        }
+        slot.answer = answer;
+      });
+
+      // render clue list, grouped by direction
+      const across = slots.filter(s => s.dir === 'across').sort((a, b) => a.number - b.number);
+      const down = slots.filter(s => s.dir === 'down').sort((a, b) => a.number - b.number);
+      const clueList = document.getElementById('clueList');
+      function renderGroup(title, group) {
+        if (!group.length) return '';
+        const items = group.map(s => {
+          const custom = CONFIG.crosswordScreen.clues[s.id];
+          const text = custom ? custom.clue : '[clue]';
+          return `<li><b>${s.number}.</b>&nbsp;${text}</li>`;
+        }).join('');
+        return `<h3>${title}</h3><ol>${items}</ol>`;
+      }
+      clueList.innerHTML = renderGroup('Across', across) + renderGroup('Down', down);
+
+      let crosswordErrIdx = 0;
+      document.getElementById('checkBtn').addEventListener('click', () => {
+        let allOk = true;
+        Object.keys(inputsMap).forEach(key => {
+          validateCell(key);
+          const inp = inputsMap[key];
+          const cell = inp.parentElement;
+          if (!cell.classList.contains('correct')) {
+            allOk = false;
+          }
+        });
+
+        const btn = document.getElementById('checkBtn');
+        if (allOk) {
+          const overlay = document.getElementById('unlockOverlay');
+          overlay.classList.add('show');
+          setTimeout(() => { document.getElementById('lockWrap').classList.add('unlocked'); burstConfetti(); }, 300);
+          setTimeout(() => { overlay.classList.remove('show'); goTo(2); }, 2200);
+        } else {
+          const errList = (CONFIG.crosswordScreen && CONFIG.crosswordScreen.errorPhrases && CONFIG.crosswordScreen.errorPhrases.length)
+            ? CONFIG.crosswordScreen.errorPhrases
+            : ["Some letters need fixing ✏️"];
+
+          const msg = errList[crosswordErrIdx % errList.length];
+          crosswordErrIdx++;
+
+          btn.textContent = msg;
+          setTimeout(() => btn.textContent = 'Check answers', 2200);
+        }
+      });
+    }
+
+    /* ---------------- cute gifs & stickers ---------------- */
+    const CUTE_GIFS = [
+      "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3ZhcXk5bmJscTRubW9sdWllOXd4NXpndTFoODF5NnQzNnJycTBhZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/KztT2c4u8mYYUiMKdJ/giphy.gif",
+      "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHY5bDNwbWZ4ODNxeW82N2pjc251Mzhxb2V0dGV6ZHhxc250cXpnMiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/3o7TKoWXm3okO1mgHC/giphy.gif",
+      "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNmNudHJqZWhlYTFkZzl2OHFldDgyZmtraWhscTVxbDFpZzM4eG9reSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/LpDmM2wSt6Hm5fKJVa/giphy.gif",
+      "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWYydmx2bXRqdHJwOHltOHJrbDRrd2oxbjZkb2p1aWF1cHNtd25zbiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/3oD3Yp1eAFzM55d49G/giphy.gif"
+    ];
+
+    function createStickerElement(src) {
+      if (src && (src.endsWith('.mp4') || src.endsWith('.webm') || src.endsWith('.mov'))) {
+        const video = document.createElement('video');
+        video.className = 'gif-overlay';
+        video.src = src;
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = true;
+        video.playsInline = true;
+        video.setAttribute('muted', '');
+        video.setAttribute('playsinline', '');
+        return video;
+      } else {
+        const img = document.createElement('img');
+        img.className = 'gif-overlay';
+        img.src = src;
+        img.alt = 'cute sticker';
+        return img;
+      }
+    }
+
+    /* ---------------- photos ---------------- */
+    function buildPhotos() {
+      const list = document.getElementById('photoList');
+      list.innerHTML = '';
+      CONFIG.photosScreen.photos.forEach((p, i) => {
+        const item = document.createElement('div');
+        item.className = 'photo-item ' + (i % 2 === 0 ? 'left' : 'right');
+
+        const frame = document.createElement('div');
+        frame.className = 'photo-frame';
+
+        const num = i + 1;
+        const defaultSources = [
+          p.src,
+          `piks/${num}.jpg`,
+          `media/${num}.jpg`,
+          `piks/${num}.jpeg`,
+          `media/${num}.jpeg`,
+          `piks/${num}.png`,
+          `media/${num}.png`,
+          `piks/${num}.webp`,
+          `media/${num}.webp`,
+          `piks/${num}.JPG`,
+          `media/${num}.JPG`
+        ].filter(Boolean);
+
+        let triedSrcIndex = 0;
+        function tryLoadPhoto() {
+          if (triedSrcIndex >= defaultSources.length) {
+            frame.textContent = '📷 PHOTO ' + num;
+            return;
+          }
+          const currentSrc = defaultSources[triedSrcIndex++];
+          const testImg = new Image();
+          testImg.onload = () => {
+            frame.style.backgroundImage = `url('${encodeURI(currentSrc)}')`;
+          };
+          testImg.onerror = tryLoadPhoto;
+          testImg.src = currentSrc;
+        }
+        tryLoadPhoto();
+
+        // Sticker / GIF logic: supports .gif and .mp4 clips
+        const stickerSrc = p.gif ? p.gif : `gifs/${num}.mp4`;
+        const stickerEl = createStickerElement(stickerSrc);
+
+        if (stickerEl.tagName === 'VIDEO') {
+          stickerEl.onerror = () => {
+            const fallbackImg = createStickerElement(`gifs/${num}.gif`);
+            fallbackImg.onerror = () => {
+              const giphy = createStickerElement(CUTE_GIFS[i % CUTE_GIFS.length]);
+              stickerEl.replaceWith(giphy);
+            };
+            stickerEl.replaceWith(fallbackImg);
+          };
+        } else {
+          stickerEl.onerror = () => {
+            const giphy = createStickerElement(CUTE_GIFS[i % CUTE_GIFS.length]);
+            stickerEl.replaceWith(giphy);
+          };
+        }
+
+        const caption = document.createElement('div');
+        caption.className = 'photo-caption';
+        caption.textContent = p.caption;
+
+        item.appendChild(frame);
+        item.appendChild(stickerEl);
+        item.appendChild(caption);
+        list.appendChild(item);
+      });
+
+      setupScrollAnimations();
+    }
+
+    /* ---------------- page 3 scroll & pop-in animations ---------------- */
+    let treasureUnlockedFired = false;
+    let finaleConfettiFired = false;
+
+    function setupScrollAnimations() {
+      const page2 = document.getElementById('page2');
+      const bar = document.getElementById('loadingBarFill');
+      const heart = document.getElementById('heartSlider');
+      const header = document.getElementById('page3Header');
+      const photoItems = document.querySelectorAll('.photo-item');
+      const finale = document.getElementById('finaleBlock');
+
+      function checkVisibility() {
+        if (!page2) return;
+        const pageRect = page2.getBoundingClientRect();
+        const scrollTop = page2.scrollTop;
+        const scrollHeight = page2.scrollHeight - page2.clientHeight;
+        const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+
+        if (bar) bar.style.width = Math.min(100, Math.max(0, progress)) + '%';
+
+        // Check if reached gold treasure end (94%+)
+        if (progress >= 94) {
+          if (!treasureUnlockedFired) {
+            treasureUnlockedFired = true;
+            if (header) header.classList.add('gold-treasure');
+            if (heart) heart.textContent = '🏆';
+            burstConfetti();
+          }
+        } else if (progress < 80) {
+          if (treasureUnlockedFired) {
+            treasureUnlockedFired = false;
+            if (header) header.classList.remove('gold-treasure');
+            if (heart) heart.textContent = '💖';
+          }
+        }
+
+        // Smooth scroll fade-in & scale to original image view at screen center
+        const viewportHeight = pageRect.height;
+        const pageCenterY = pageRect.top + viewportHeight * 0.52;
+
+        photoItems.forEach(item => {
+          if (item.dataset.centered === 'true') {
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0px) scale(1)';
+            item.style.filter = 'none';
+            return;
+          }
+
+          const rect = item.getBoundingClientRect();
+          const itemCenterY = rect.top + rect.height * 0.5;
+
+          if (rect.top >= pageRect.bottom) {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(40px) scale(0.85)';
+            item.style.filter = 'blur(4px)';
+            return;
+          }
+
+          const distFromBottom = pageRect.bottom - itemCenterY;
+          const totalDistToCenter = pageRect.bottom - pageCenterY;
+
+          let ratio = distFromBottom / totalDistToCenter;
+          ratio = Math.max(0, Math.min(1, ratio));
+
+          const easeRatio = 1 - Math.pow(1 - ratio, 2);
+
+          const opacity = Math.min(1, easeRatio * 1.15);
+          const scale = 0.85 + (0.15 * easeRatio);
+          const translateY = (1 - easeRatio) * 35;
+          const blur = (1 - easeRatio) * 4;
+
+          item.style.opacity = opacity.toFixed(3);
+          item.style.transform = `translateY(${translateY.toFixed(1)}px) scale(${scale.toFixed(3)})`;
+          item.style.filter = blur > 0.1 ? `blur(${blur.toFixed(1)}px)` : 'none';
+
+          if (ratio >= 0.92) {
+            item.dataset.centered = 'true';
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0px) scale(1)';
+            item.style.filter = 'none';
+          }
+        });
+
+        // Zoom-in finale block & fire confetti on reaching end
+        if (finale) {
+          const fRect = finale.getBoundingClientRect();
+          if (fRect.top < pageRect.bottom - 10) {
+            if (!finale.classList.contains('visible')) {
+              finale.classList.add('visible');
+              if (!finaleConfettiFired) {
+                finaleConfettiFired = true;
+                burstConfetti();
+              }
+            }
+          }
+        }
+      }
+
+      page2.addEventListener('scroll', checkVisibility);
+      setTimeout(checkVisibility, 100);
+    }
+
+    /* ---------------- audio & page nav ---------------- */
+    let currentTrack = '';
+    const audio = document.getElementById('audio');
+    const musicBtn = document.getElementById('musicToggleBtn');
+
+    function updateMusicBtnState() {
+      if (!audio || !musicBtn) return;
+      if (!audio.paused && audio.currentTime > 0) {
+        musicBtn.classList.add('playing');
+        musicBtn.innerHTML = '🎵 <span>⏸</span>';
+        musicBtn.setAttribute('title', 'Pause Music');
+      } else {
+        musicBtn.classList.remove('playing');
+        musicBtn.innerHTML = '🎵 <span>▶</span>';
+        musicBtn.setAttribute('title', 'Play Music');
+      }
+    }
+
+    if (audio) {
+      audio.addEventListener('play', updateMusicBtnState);
+      audio.addEventListener('pause', updateMusicBtnState);
+    }
+
+    if (musicBtn) {
+      musicBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!audio) return;
+        if (audio.paused) {
+          if (!audio.src || audio.src === window.location.href) {
+            const activePage = document.querySelector('.page.active');
+            const pageIndex = activePage ? parseInt(activePage.dataset.page) : 0;
+            const song = (pageIndex === 2)
+              ? ((CONFIG.music && CONFIG.music.final) ? CONFIG.music.final : 'music/3.mp3')
+              : ((CONFIG.music && CONFIG.music.crossword) ? CONFIG.music.crossword : 'music/2.mp3');
+            audio.src = song;
+          }
+          audio.play().then(updateMusicBtnState).catch(e => console.log('Play error:', e));
+        } else {
+          audio.pause();
+          updateMusicBtnState();
+        }
+      });
+    }
+
+    // Unlock browser audio context on any user tap/click on document
+    function unlockAudio() {
+      if (!audio) return;
+      if (audio.paused && currentTrack) {
+        audio.play().catch(() => { });
+      }
+    }
+    document.addEventListener('click', unlockAudio, { passive: true });
+    document.addEventListener('touchstart', unlockAudio, { passive: true });
+
+    function playBgMusic(src) {
+      if (!audio) return;
+      currentTrack = src;
+      const isSame = audio.src && (audio.src.endsWith(src) || audio.src.includes(encodeURI(src)));
+      if (!isSame) {
+        audio.src = src;
+        audio.load();
+      }
+      audio.play().then(() => {
+        updateMusicBtnState();
+      }).catch(e => {
+        console.log('Audio playback waiting for user interaction:', e);
+        updateMusicBtnState();
+      });
+    }
+
+    const pages = document.querySelectorAll('.page');
+    function goTo(i) {
+      pages.forEach(p => p.classList.remove('active'));
+      pages[i].classList.add('active');
+
+      if (musicBtn) {
+        musicBtn.style.display = (i === 0) ? 'none' : 'flex';
+      }
+
+      if (i === 1) {
+        // Entered crossword page -> play music/2.mp3
+        const song = (CONFIG.music && CONFIG.music.crossword) ? CONFIG.music.crossword : 'music/2.mp3';
+        playBgMusic(song);
+      } else if (i === 2) {
+        // Entered final page -> play music/3.mp3
+        const song = (CONFIG.music && CONFIG.music.final) ? CONFIG.music.final : 'music/3.mp3';
+        playBgMusic(song);
+        setTimeout(setupScrollAnimations, 150);
+      }
+    }
+
+    init();
+  </script>
+
+</body>
+
+</html>
